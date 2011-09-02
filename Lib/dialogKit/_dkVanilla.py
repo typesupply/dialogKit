@@ -1,6 +1,8 @@
 from AppKit import *
 from vanilla import Window as _Window
-from vanilla import TextBox, EditText, Button, PopUpButton, List, CheckBox, HorizontalLine, VerticalLine
+from vanilla import List as _List
+from vanilla import PopUpButton as _PopUpButton
+from vanilla import TextBox, EditText, Button, CheckBox, HorizontalLine, VerticalLine
 
 
 __all__ = ['ModalDialog', 'Button', 'TextBox', 'EditText', 'PopUpButton', 'List', 'CheckBox', 'HorizontalLine', 'VerticalLine']
@@ -48,4 +50,19 @@ class ModalDialog(_Window):
         self.close()
         if self._cancelCallback is not None:
             self._cancelCallback(self)
+
+
+class List(_List):
+
+    def __init__(self, posSize, items, callback=None):
+        super(List, self).__init__(posSize, items=items, selectionCallback=callback)
+
+
+class PopUpButton(_PopUpButton):
+
+    def setSelection(self, value):
+        super(PopUpButton, self).set(value)
+
+    def getSelection(self):
+        return super(PopUpButton, self).get()
 
