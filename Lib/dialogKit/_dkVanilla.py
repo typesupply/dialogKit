@@ -1,4 +1,4 @@
-from AppKit import NSModalPanelWindowLevel
+from AppKit import *
 from vanilla import Window as _Window
 from vanilla import TextBox, EditText, Button, PopUpButton, List, CheckBox, HorizontalLine, VerticalLine
 
@@ -15,9 +15,14 @@ class ModalDialog(_Window):
             title = ''
         super(ModalDialog, self).__init__(posSize, title, minSize=None, maxSize=None,
                 textured=False, autosaveName=None, closable=False)
+        window = self.getNSWindow()
+        self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)       
+        self._window.standardWindowButton_(NSWindowZoomButton).setHidden_(True)
+        self._window.standardWindowButton_(NSWindowMiniaturizeButton).setHidden_(True)
+
         self._okCallback = okCallback
         self._cancelCallback = cancelCallback
-        #
+
         self._bottomLine = HorizontalLine((10, -50, -10, 1))
         self._okButton = Button((-85, -35, 70, 20), okText, callback=self._internalOKCallback)
         self._cancelButton = Button((-165, -35, 70, 20), cancelText, callback=self._internalCancelCallback)
@@ -27,16 +32,12 @@ class ModalDialog(_Window):
             self.center()
 
     def open(self):
-        app = NSApp()
-        self._modalSession = app.beginModalSessionForWindow_(self.getNSWindow())
-        app.runModalSession_(self._modalSession)
+        super(ModalDialog, self).open()
+        NSApp().runModalForWindow_(self.getNSWindow())
 
     def close(self):
-        app = NSApp()
-        app.endModalSession_(self._modalSession)
-        w = self.getNSWindow()
-        w.orderOut_(None)
-        w.autorelease()
+        super(ModalDialog, self).close()
+        NSApp().stopModal()
 
     def _internalOKCallback(self, sender):
         self.close()
