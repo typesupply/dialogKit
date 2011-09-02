@@ -7,9 +7,9 @@ __all__ = ['ModalDialog', 'Button', 'TextBox', 'EditText', 'PopUpButton', 'List'
 
 
 class ModalDialog(_Window):
-    
-    _nsWindowLevel = NSModalPanelWindowLevel
-    
+
+    nsWindowLevel = NSModalPanelWindowLevel
+
     def __init__(self, posSize, title=None, okText="OK", cancelText="Cancel", okCallback=None, cancelCallback=None):
         if title is None:
             title = ''
@@ -25,12 +25,24 @@ class ModalDialog(_Window):
         self._cancelButton.bind('.', ['command'])
         if len(posSize) == 2:
             self.center()
-    
+
+    def open(self):
+        app = NSApp()
+        self._modalSession = app.beginModalSessionForWindow_(self.getNSWindow())
+        app.runModalSession_(self._modalSession)
+
+    def close(self):
+        app = NSApp()
+        app.endModalSession_(self._modalSession)
+        w = self.getNSWindow()
+        w.orderOut_(None)
+        w.autorelease()
+
     def _internalOKCallback(self, sender):
         self.close()
         if self._okCallback is not None:
             self._okCallback(self)
-    
+
     def _internalCancelCallback(self, sender):
         self.close()
         if self._cancelCallback is not None:
