@@ -320,10 +320,26 @@ class List(UIBaseObject):
         """
         return a list of selected item indexes
         """
+        import sys
         dialog = self._dialog()
         dialog._dialog.GetValue(self._contentID)
         getattr(dialog, self._contentID)
         index = getattr(dialog, self._contentIndexID)
+        # Since FLS v5.2, the GetValue() method of the Dialog() class returns
+        # a 'wrong' index value from the specified LISTCONTROL.
+        # If the selected index is n, it will return n-1. For example, when
+        # the index is 1, it returns 0; when it's 2, it returns 1, and so on.
+        # If the selection is empty, FLS v5.2 returns -2, while the old v5.0 
+        # returned None.
+        # See also:
+        # - https://github.com/robofab-developers/robofab/pull/14
+        # - http://forum.fontlab.com/index.php?topic=8807.0
+        # - http://forum.fontlab.com/index.php?topic=9003.0
+        if fl.buildnumber > 4600 and sys.platform == 'win32':
+            if index == -2:
+                index == -1
+            else:
+                index += 1
         if index == -1:
             return []
         return [index]
