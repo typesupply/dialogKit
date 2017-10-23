@@ -1,8 +1,10 @@
+import objc
 from AppKit import *
 from vanilla import Window as _Window
 from vanilla import List as _List
 from vanilla import PopUpButton as _PopUpButton
 from vanilla import TextBox, EditText, Button, CheckBox, HorizontalLine, VerticalLine
+from vanilla.py23 import python_method
 from defconAppKit.controls.glyphLineView import GlyphLineView as _GlyphLineView
 from defconAppKit.controls.glyphView import GlyphView as _GlyphView
 from defconAppKit.tools.textSplitter import splitText
@@ -48,7 +50,7 @@ class ModalDialog(_Window):
         super(ModalDialog, self).__init__(posSize, title, minSize=None, maxSize=None,
                 textured=False, autosaveName=None, closable=False)
         window = self.getNSWindow()
-        self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)       
+        self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)
         self._window.standardWindowButton_(NSWindowZoomButton).setHidden_(True)
         self._window.standardWindowButton_(NSWindowMiniaturizeButton).setHidden_(True)
         #
@@ -71,11 +73,13 @@ class ModalDialog(_Window):
         super(ModalDialog, self).close()
         NSApp().stopModal()
 
+    @python_method
     def _internalOKCallback(self, sender):
         self.close()
         if self._okCallback is not None:
             self._okCallback(self)
 
+    @python_method
     def _internalCancelCallback(self, sender):
         self.close()
         if self._cancelCallback is not None:
