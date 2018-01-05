@@ -1,5 +1,5 @@
-import objc
-from AppKit import *
+from AppKit import NSWindowCloseButton, NSModalPanelWindowLevel, NSWindowZoomButton, NSWindowMiniaturizeButton, \
+    NSApp
 from vanilla import Window as _Window
 from vanilla import List as _List
 from vanilla import PopUpButton as _PopUpButton
@@ -26,6 +26,7 @@ def _getCurrentFont():
         pass
     return None
 
+
 def _getCurrentGlyph():
     # hack around CurrentGlyph incompatibilities
     from robofab.world import CurrentGlyph as RoboFabCurrentGlyph
@@ -49,7 +50,6 @@ class ModalDialog(_Window):
             title = ''
         super(ModalDialog, self).__init__(posSize, title, minSize=None, maxSize=None,
                 textured=False, autosaveName=None, closable=False)
-        window = self.getNSWindow()
         self._window.standardWindowButton_(NSWindowCloseButton).setHidden_(True)
         self._window.standardWindowButton_(NSWindowZoomButton).setHidden_(True)
         self._window.standardWindowButton_(NSWindowMiniaturizeButton).setHidden_(True)
@@ -112,7 +112,7 @@ class GlyphLineView(_GlyphLineView):
             posSize, pointSize=None, rightToLeft=rightToLeft,
             autohideScrollers=True, showPointSizePlacard=False
         )
-        #self.setFont(font)
+        # self.setFont(font)
 
     def set(self, text):
         glyphNames = splitText(text, self._font.getCharacterMapping())
@@ -132,11 +132,11 @@ class GlyphLineView(_GlyphLineView):
 class GlyphView(_GlyphView):
 
     def __init__(self, posSize, font, glyph, margin=30,
-        showFill=True, showOutline=False,
-        showDescender=True, showBaseline=True, showXHeight=True,
-        showAscender=True, showCapHeight=True, showUPMTop=False,
-        showLeftSidebearing=True, showRightSidebearing=True,
-        showOnCurvePoints=True):
+            showFill=True, showOutline=False,
+            showDescender=True, showBaseline=True, showXHeight=True,
+            showAscender=True, showCapHeight=True, showUPMTop=False,
+            showLeftSidebearing=True, showRightSidebearing=True,
+            showOnCurvePoints=True):
         super(GlyphView, self).__init__(posSize)
         self.setShowFill(showFill)
         self.setShowOutline(showOutline)
