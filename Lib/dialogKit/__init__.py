@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 """
 dialogKit: easy bake dialogs
 """
@@ -18,11 +19,11 @@ if not haveFL:
         pass
 # perform the environment specific import
 if haveFL:
-    from _dkFL import *
+    from ._dkFL import *
 elif haveVanilla:
-    from _dkVanilla import *
+    from ._dkVanilla import *
 else:
-    raise ImportError, 'dialogKit is not available in this environment'
+    raise ImportError('dialogKit is not available in this environment')
 
 numberVersion = (0, 0, "beta", 1)
 version = "0.0.1b"

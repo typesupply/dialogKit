@@ -15,7 +15,7 @@ for the tests to be performed.
 from dialogKit import *
 
 class TestCase(object):
-    
+
     def __init__(self, posSize, title=''):
         print 'testing:', self._name
         print
@@ -29,7 +29,7 @@ class TestCase(object):
         else:
             x, y, w, h = posSize
         self.w.runTestsButton = Button((10, 10, w-20, 20), 'Run Tests', callback=self.runTests)
-    
+
     def assertEqual(self, value1, value2, assertionID=None):
         self._testCount += 1
         if value1 != value2:
@@ -37,7 +37,7 @@ class TestCase(object):
             print value1, '!=', value2
             print
             self._errorCount += 1
-    
+
     def finish(self):
         print '-' * 70
         if not self._errorCount:
@@ -47,7 +47,7 @@ class TestCase(object):
         print
         print
         self.w.close()
-    
+
     def _userStopped(self, sender):
         print 'FAILURE: user stopped test'
         print
@@ -55,14 +55,14 @@ class TestCase(object):
 
 
 class ButtonTest(TestCase):
-    
+
     _name = 'ButtonTest'
-    
+
     def __init__(self):
         super(ButtonTest, self).__init__(posSize=(200, 120))
         self.w.button = Button((10, 40, 180, 20), 'foo')
         self.w.open()
-    
+
     def runTests(self, sender):
         self.assertEqual(self.w.button.get(), 'foo', 'get')
         #
@@ -70,14 +70,14 @@ class ButtonTest(TestCase):
 
 
 class TextBoxTest(TestCase):
-    
+
     _name = "TextBoxTest"
-    
+
     def __init__(self):
         super(TextBoxTest, self).__init__(posSize=(200, 120))
         self.w.textBox = TextBox((10, 40, 180, 20), 'foo')
         self.w.open()
-    
+
     def runTests(self, sender):
         self.assertEqual(self.w.textBox.get(), 'foo', 'get')
         #
@@ -88,14 +88,14 @@ class TextBoxTest(TestCase):
 
 
 class PopUpButtonTest(TestCase):
-    
+
     _name = "PopUpButtonTest"
 
     def __init__(self):
         super(PopUpButtonTest, self).__init__(posSize=(200, 127))
         self.w.popUpButton = PopUpButton((10, 40, 180, 27), ['foo', 'bar'])
         self.w.open()
-    
+
     def runTests(self, sender):
         self.w.popUpButton.setSelection(0)
         self.assertEqual(self.w.popUpButton.getSelection(), 0, 'getSelection')
