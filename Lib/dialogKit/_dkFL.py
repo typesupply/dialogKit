@@ -43,7 +43,7 @@ class ModalDialog(object):
         #
         self._okCallback=okCallback
         self._cancelCallback=cancelCallback
-    
+
     def __setattr__(self, attr, value):
         if isinstance(value, UIBaseObject):
             assert not hasattr(self, attr), "attribute '%s' can not be replaced" % attr
@@ -90,30 +90,30 @@ class ModalDialog(object):
             # it doesn't matter if the value does not have a callback
             # assigned. the _callbackWrapper method safely handles
             # those cases. the reason it is not handled here is that
-            # custom controls (used by _CanvasWrapper) use the method 
+            # custom controls (used by _CanvasWrapper) use the method
             # normally reserved for control hits to paint the control.
             setattr(self, 'on_%s' % value._contentID, value._callbackWrapper)
-        super(ModalDialog, self).__setattr__(attr, value)        
-    
+        super(ModalDialog, self).__setattr__(attr, value)
+
     def open(self):
         """open the dialog"""
         self._dialog.Run()
-    
+
     def close(self):
         """close the dialog"""
         self._dialog.End()
-    
+
     def on_cancel(self, code):
         if self._cancelCallback is not None:
             self._cancelCallback(self)
-    
+
     def on_ok(self, code):
         if self._okCallback is not None:
             self._okCallback(self)
 
 
 class UIBaseObject(object):
-    
+
     def __init__(self, posSize, title, callback=None, content=None):
         self._posSize = posSize
         self._title = title
@@ -122,16 +122,16 @@ class UIBaseObject(object):
 
     def _setDialog(self, dialog):
         self._dialog = weakref.ref(dialog)
-    
+
     def _callbackWrapper(self, code):
         if self._callback is not None:
             self._callback(self)
-    
+
     def _setupContent(self):
         # set the attribute data in the parent class.
         # this will be used for GetValue and PutValue operations.
         setattr(self._dialog(), self._contentID, self._content)
-    
+
     def enable(self, value):
         """
         enable the object by passing True
@@ -140,7 +140,7 @@ class UIBaseObject(object):
         value = int(value)
         dialog = self._dialog()
         dialog._dialog.Enable(self._contentID, value)
-    
+
     def show(self, value):
         """
         show the object by passing True
@@ -148,7 +148,7 @@ class UIBaseObject(object):
         """
         dialog = self._dialog()
         dialog._dialog.Show(self._contentID, value)
-    
+
     def set(self, value):
         """
         set the content of the object
@@ -166,7 +166,7 @@ class UIBaseObject(object):
         dialog._dialog.PutValue(self._contentID)
         # reset the callback
         self._callback = callback
-    
+
     def get(self):
         """
         return the contents of the object
@@ -175,36 +175,36 @@ class UIBaseObject(object):
         dialog._dialog.GetValue(self._contentID)
         self._content = getattr(dialog, self._contentID)
         return self._content
-    
+
 
 class Button(UIBaseObject):
-    
+
     _type = BUTTONCONTROL
     _style = STYLE_BUTTON
-    
+
     def __init__(self, posSize, title, callback=None):
         super(Button, self).__init__(posSize=posSize, title=title, callback=callback, content=title)
-    
+
     def set(self, value):
         """
         Not implemented for Button
         """
-        raise NotImplementedError, "It is not possible to set the text in a button"
+        raise NotImplementedError("It is not possible to set the text in a button")
 
 
 class PopUpButton(UIBaseObject):
-    
+
     _type = CHOICECONTROL
     _style = STYLE_CHOICE
-    
+
     def __init__(self, posSize, items, callback=None):
         super(PopUpButton, self).__init__(posSize=posSize, title='', callback=callback, content=items)
-    
+
     def _setupContent(self):
         super(PopUpButton, self)._setupContent()
         self._contentIndexID = self._contentID + '_index'
         self.setSelection(0)
-    
+
     def setSelection(self, value):
         """
         set the selected item
@@ -221,7 +221,7 @@ class PopUpButton(UIBaseObject):
         dialog._dialog.PutValue(self._contentID)
         # reset the callback
         self._callback = callback
-    
+
     def getSelection(self):
         """
         return the index of the selected item
@@ -236,10 +236,10 @@ class PopUpButton(UIBaseObject):
 
 
 class List(UIBaseObject):
-    
+
     _type = LISTCONTROL
     _style = STYLE_LIST
-    
+
     def __init__(self, posSize, items, callback=None):
         super(List, self).__init__(posSize=posSize, title='', callback=callback, content=items)
 
@@ -250,14 +250,14 @@ class List(UIBaseObject):
 
     def __len__(self):
         return len(self._content)
-    
+
     def __getitem__(self, index):
         return self._content[index]
-    
+
     def __setitem__(self, index, value):
         self._content[index] = value
         self.set(self._content)
-    
+
     def __delitem__(self, index):
         del self._content[index]
         self.set(self._content)
@@ -297,14 +297,14 @@ class List(UIBaseObject):
         del self._content[index]
         self._content.insert(index, item)
         self.set(self._content)
-    
+
     #
-    
+
     def setSelection(self, value):
         """
         set the selected item index(es)
         value should be a list of indexes
-        
+
         in FontLab, it setting multiple
         selection indexes is not possible.
         """
@@ -315,7 +315,7 @@ class List(UIBaseObject):
             value = value[0]
         setattr(dialog, self._contentIndexID, value)
         dialog._dialog.PutValue(self._contentID)
-    
+
     def getSelection(self):
         """
         return a list of selected item indexes
@@ -329,7 +329,7 @@ class List(UIBaseObject):
         # a 'wrong' index value from the specified LISTCONTROL.
         # If the selected index is n, it will return n-1. For example, when
         # the index is 1, it returns 0; when it's 2, it returns 1, and so on.
-        # If the selection is empty, FLS v5.2 returns -2, while the old v5.0 
+        # If the selection is empty, FLS v5.2 returns -2, while the old v5.0
         # returned None.
         # See also:
         # - https://github.com/robofab-developers/robofab/pull/14
@@ -343,7 +343,7 @@ class List(UIBaseObject):
         if index == -1:
             return []
         return [index]
-    
+
     def set(self, value):
         """
         set the contents of the list
@@ -352,7 +352,7 @@ class List(UIBaseObject):
         dialog = self._dialog()
         setattr(dialog, self._contentID, value)
         dialog._dialog.PutValue(self._contentID)
-    
+
     def get(self):
         """
         return the contents of the list
@@ -361,13 +361,13 @@ class List(UIBaseObject):
 
 
 class EditText(UIBaseObject):
-    
+
     _type = EDITCONTROL
     _style = STYLE_EDIT
-    
+
     def __init__(self, posSize, text="", callback=None):
         super(EditText, self).__init__(posSize=posSize, title='', callback=callback, content=text)
-    
+
     def set(self, value):
         if osName == 'mac':
             value = '\r'.join(value.splitlines())
@@ -375,10 +375,10 @@ class EditText(UIBaseObject):
 
 
 class TextBox(UIBaseObject):
-    
+
     _type = STATICCONTROL
     _style = STYLE_LABEL
-    
+
     def __init__(self, posSize, text):
         super(TextBox, self).__init__(posSize=posSize, title=text, callback=None, content=text)
 
@@ -386,13 +386,13 @@ class TextBox(UIBaseObject):
         if osName == 'mac':
             value = '\r'.join(value.splitlines())
         super(TextBox, self).set(value)
-        
+
 
 class CheckBox(UIBaseObject):
-    
+
     _type = CHECKBOXCONTROL
     _style = STYLE_CHECKBOX
-    
+
     def __init__(self, posSize, title, callback=None, value=False):
         value = int(value)
         super(CheckBox, self).__init__(posSize=posSize, title=title, callback=callback, content=value)
@@ -404,7 +404,7 @@ class CheckBox(UIBaseObject):
         """
         value = int(value)
         super(CheckBox, self).set(value)
-    
+
     def get(self):
         """
         returns a boolean representing the state of the object
@@ -481,10 +481,10 @@ def _fontIndex(font):
 
 
 class GlyphLineView(UIBaseObject):
-    
+
     _type = PREVIEWCONTROL
     _style = STYLE_LABEL
-    
+
     def __init__(self, posSize, text="", font=None, rightToLeft=False):
         if font is None:
             self._fontIndex = fl.ifont
@@ -493,24 +493,24 @@ class GlyphLineView(UIBaseObject):
         self._rightToLeft = False
         text = self._makeText(text)
         super(GlyphLineView, self).__init__(posSize=posSize, title="", callback=None, content=text)
-    
+
     def _makeText(self, text):
         text = "f:%d|d:%s|r:%d" % (self._fontIndex, text, self._rightToLeft)
         return text
-    
+
     def set(self, text):
         """
         set the text displayed text string
         """
         text = self._makeText(text)
         super(GlyphLineView, self).set(text)
-    
+
     def get(self):
         """
         return the displayed text string
         """
         return self._content[6:-4]
-    
+
     def setFont(self, font):
         """
         set the index for the font that should be displayed
@@ -520,7 +520,7 @@ class GlyphLineView(UIBaseObject):
         else:
             self._fontIndex = _fontIndex(font)
         self.set(self.get())
-    
+
     def setRightToLeft(self, value):
         """
         set the setting directon of the display
@@ -530,7 +530,7 @@ class GlyphLineView(UIBaseObject):
 
 
 class GlyphView(_CanvasWrapper):
-    
+
     def __init__(self, posSize, font, glyph, margin=30,
         showFill=True, showOutline=False,
         showDescender=True, showBaseline=True, showXHeight=True,
@@ -555,7 +555,7 @@ class GlyphView(_CanvasWrapper):
         self._showOnCurvePoints = showOnCurvePoints
         #
         self.set(font, glyph)
-    
+
     def set(self, font, glyph):
         """
         change the glyph displayed in the view
@@ -566,7 +566,7 @@ class GlyphView(_CanvasWrapper):
         else:
             self._font = _unwrapRobofab(font)
             self._glyph = _unwrapRobofab(glyph)
-    
+
     ###
 
     def getShowFill(self):
@@ -642,12 +642,12 @@ class GlyphView(_CanvasWrapper):
         self._showOnCurvePoints = value
 
     ###
-    
+
     def update(self):
         if hasattr(self, '_dialog'):
             dialog = self._dialog()
             dialog._dialog.Repaint(self._contentID)
-    
+
     def _paint(self, canvas):
         if self._font is None or self._glyph is None:
             return
