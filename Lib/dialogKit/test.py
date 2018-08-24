@@ -17,8 +17,8 @@ from dialogKit import *
 class TestCase(object):
 
     def __init__(self, posSize, title=''):
-        print 'testing:', self._name
-        print
+        print('testing:', self._name)
+        print('')
         #
         self._errorCount = 0
         self._testCount = 0
@@ -33,25 +33,25 @@ class TestCase(object):
     def assertEqual(self, value1, value2, assertionID=None):
         self._testCount += 1
         if value1 != value2:
-            print 'ERROR:', self._name, assertionID
-            print value1, '!=', value2
-            print
+            print('ERROR:', self._name, assertionID)
+            print(value1, '!=', value2)
+            print('')
             self._errorCount += 1
 
     def finish(self):
-        print '-' * 70
+        print('-' * 70)
         if not self._errorCount:
-            print 'OK: Ran %d tests' % self._testCount
+            print('OK: Ran %d tests' % self._testCount)
         else:
-            print 'FAILURE: Ran %d tests. Found %d errors' % (self._testCount, self._errorCount)
-        print
-        print
+            print('FAILURE: Ran %d tests. Found %d errors' % (self._testCount, self._errorCount))
+        print('')
+        print('')
         self.w.close()
 
     def _userStopped(self, sender):
-        print 'FAILURE: user stopped test'
-        print
-        print
+        print('FAILURE: user stopped test')
+        print('')
+        print('')
 
 
 class ButtonTest(TestCase):
